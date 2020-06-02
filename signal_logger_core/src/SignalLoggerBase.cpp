@@ -430,6 +430,16 @@ const LogElementInterface & SignalLoggerBase::getElement(const std::string & nam
   return *logElements_[name];
 }
 
+std::unordered_set<std::string> SignalLoggerBase::getElementNames()
+{
+  boost::shared_lock<boost::shared_mutex> lockLogger(loggerMutex_);
+  std::unordered_set<std::string> element_names {};
+  for (const auto & element: logElements_) {
+    element_names.insert(element.first);
+  }
+  return element_names;
+}
+
 bool SignalLoggerBase::enableElement(const std::string & name)
 {
   boost::upgrade_lock<boost::shared_mutex> lockLogger(loggerMutex_);

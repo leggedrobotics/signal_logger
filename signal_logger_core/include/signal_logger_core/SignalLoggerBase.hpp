@@ -29,7 +29,9 @@
 #include <condition_variable>
 #include <atomic>
 #include <memory>
+#include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <functional>
 
 namespace signal_logger {
@@ -116,6 +118,12 @@ class SignalLoggerBase {
    * @return const log element reference
    */
   const LogElementInterface & getElement(const std::string & name);
+
+  /**
+ * @brief Gets a unordered set containing the names of all elements
+ * @return unordered set containing all element names as strings
+ */
+  std::unordered_set<std::string>  getElementNames();
 
   /**
    * @brief Enables the element if:
