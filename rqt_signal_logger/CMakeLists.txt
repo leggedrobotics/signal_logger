@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5.1)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 NEW)
 endif()
@@ -6,7 +6,7 @@ endif()
 project(rqt_signal_logger)
 
 # Set compiler flags
-add_definitions(-std=c++11 -Wall -Werror)
+add_definitions(-std=c++11 -Wall)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
@@ -152,3 +152,26 @@ install(DIRECTORY params/
   FILES_MATCHING
   PATTERN "*.yaml"
 )
+
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+  catkin_add_gtest(test_${PROJECT_NAME}
+    test/test_${PROJECT_NAME}.cpp
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test
+  )
+
+  if(TARGET test_${PROJECT_NAME})
+    target_link_libraries( test_${PROJECT_NAME}
+      ${PROJECT_NAME}
+      ${catkin_LIBRARIES}
+      gtest_main
+    )
+    find_package(cmake_code_coverage QUIET)
+    if(cmake_code_coverage_FOUND)
+      add_gtest_coverage()
+    endif(cmake_code_coverage_FOUND)
+  endif()
+endif()

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5.1)
 project(signal_logger_core)
 
 include(cmake/${PROJECT_NAME}-extras.cmake)
@@ -30,7 +30,7 @@ catkin_package(
 ## Build ##
 ###########
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_definitions(-std=c++11 -Wall -Werror)
+add_definitions(-std=c++11 -Wall)
 add_definitions(-DMELO_MIN_SEVERITY=MELO_SEVERITY_INFO)
 include_directories(include)
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -60,3 +60,26 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+	catkin_add_gtest(test_${PROJECT_NAME}
+		test/test_${PROJECT_NAME}.cpp
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test
+	)
+
+	if(TARGET test_${PROJECT_NAME})
+		target_link_libraries( test_${PROJECT_NAME}
+			${PROJECT_NAME}
+			${catkin_LIBRARIES}
+			gtest_main
+		)
+		find_package(cmake_code_coverage QUIET)
+		if(cmake_code_coverage_FOUND)
+			add_gtest_coverage()
+		endif(cmake_code_coverage_FOUND)
+	endif()
+endif()
