@@ -58,7 +58,7 @@ bool SignalLoggerRos::workerSaveData(const std::string & logFileName, const sign
 
   if(noCollectDataCallsCopy_ == 0) {
     MELO_WARN_STREAM("[SignalLoggerRos] Could not save logger data! Data count is zero.");
-    return true;
+    return false;
   }
 
   bool success = true;
@@ -172,7 +172,7 @@ bool SignalLoggerRos::saveLoggerData(signal_logger_msgs::SaveLoggerDataRequest& 
     }
   }
 
-  res.success = signal_logger::SignalLoggerBase::saveLoggerData(types);
+  res.success = signal_logger::SignalLoggerBase::saveLoggerData(types, req.customFilename);
   return true;
 }
 
