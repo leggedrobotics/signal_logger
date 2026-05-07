@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "signal_logger_ui"
 version = "0.1.0"
-description = "PyQt/PySide2 visualizer for signal_logger files."
+description = "PyQt/PySide6 visualizer for signal_logger files."
 requires-python = ">=3.8"
 dependencies = [
     "signal_logger_python",
-    "PySide2",
+    "PySide6",
     "numpy",
     "matplotlib",
     "qtconsole",

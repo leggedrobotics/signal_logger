@@ -31,7 +31,9 @@ import json
 import os
 import re
 
-from PySide2 import QtCore, QtGui, QtWidgets
+os.environ.setdefault("QT_API", "pyside6")
+
+from PySide6 import QtCore, QtGui, QtWidgets
 from signal_logger import Silo
 from signal_logger import find_log
 
@@ -438,23 +440,23 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
                 if len(plots) < 1:
                     return
                 menu = QtWidgets.QMenu(name, self.lineStyleMenu)
-                group = QtWidgets.QActionGroup(menu)
-                action = QtWidgets.QAction("All", group)
+                group = QtGui.QActionGroup(menu)
+                action = QtGui.QAction("All", group)
                 action.triggered.connect(
                     lambda: AllLineStyleDialog(
-                        self, name, self.getCanvas(), plots, style_fn).exec_())
+                        self, name, self.getCanvas(), plots, style_fn).exec())
                 group.addAction(action)
-                sep = QtWidgets.QAction(group)
+                sep = QtGui.QAction(group)
                 sep.setSeparator(True)
                 group.addAction(sep)
                 for y in plots:
                     style = style_fn(y)
-                    action = QtWidgets.QAction(style.label, group)
+                    action = QtGui.QAction(style.label, group)
                     action.triggered.connect(
                         lambda yin=y, stylein=style:
                         LineStyleDialog(
                             self, yin, self.getCanvas(), stylein,
-                            style_fn).exec_())
+                            style_fn).exec())
                     group.addAction(action)
                 menu.addActions(group.actions())
                 self.lineStyleMenu.addMenu(menu)
@@ -468,47 +470,47 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
 
         # Grid style menu
         self.gridStyleMenu = QtWidgets.QMenu("Grids", self.styleMenu)
-        self.gridDisplayActionGroup = QtWidgets.QActionGroup(self.gridStyleMenu)
+        self.gridDisplayActionGroup = QtGui.QActionGroup(self.gridStyleMenu)
         self.gridDisplayActionGroup.setExclusive(True)
-        self.leftGridAction = QtWidgets.QAction(
+        self.leftGridAction = QtGui.QAction(
             "Left", self.gridDisplayActionGroup)
         self.leftGridAction.triggered.connect(
             lambda: GridStyleDialog(
-                self, "left", self.getCanvas(), self.getCanvas().grid).exec_())
+                self, "left", self.getCanvas(), self.getCanvas().grid).exec())
         self.gridDisplayActionGroup.addAction(self.leftGridAction)
-        self.rightGridAction = QtWidgets.QAction(
+        self.rightGridAction = QtGui.QAction(
             "Right", self.gridDisplayActionGroup)
         self.rightGridAction.triggered.connect(
             lambda: GridStyleDialog(
                 self, "right", self.getCanvas(),
-                self.getCanvas().grid2).exec_())
+                self.getCanvas().grid2).exec())
         self.gridDisplayActionGroup.addAction(self.rightGridAction)
         self.gridStyleMenu.addActions(self.gridDisplayActionGroup.actions())
         self.styleMenu.addMenu(self.gridStyleMenu)
 
         # Labels
-        self.titleAction = QtWidgets.QAction(
+        self.titleAction = QtGui.QAction(
             "Title, labels and fonts", self.styleMenu)
         self.titleAction.triggered.connect(
-            lambda: LabelsTitleEditDialog(self, self.getCanvas()).exec_())
+            lambda: LabelsTitleEditDialog(self, self.getCanvas()).exec())
         self.styleMenu.addAction(self.titleAction)
 
         self.ui.menubar.addMenu(self.styleMenu)
 
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_O, self.shortcutOpenFile)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_O, self.shortcutOpenFile)
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_W, self.shortcutCloseTab)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_W, self.shortcutCloseTab)
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_PageDown, self.shortcutNextTab)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_PageDown, self.shortcutNextTab)
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_PageUp, self.shortcutPreviousTab)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_PageUp, self.shortcutPreviousTab)
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_T, self.shortcutNewTab)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_T, self.shortcutNewTab)
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_S, self.save_user_plot)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_S, self.save_user_plot)
         self.addApplicationShortcut(
-            QtCore.Qt.CTRL + QtCore.Qt.Key_A, self.shortcutAxesDialog)
+            QtCore.Qt.CTRL | QtCore.Qt.Key_A, self.shortcutAxesDialog)
 
     def reload_user_plots(self):
         self.user_plots = load_user_plots(self.user_plot_file)
@@ -532,7 +534,7 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
         self.update_user_plot_menu()
 
     def addApplicationShortcut(self, key, callback):
-        shortcut = QtWidgets.QShortcut(self)
+        shortcut = QtGui.QShortcut(self)
         shortcut.setKey(key)
         shortcut.setContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
         shortcut.activated.connect(lambda: callback())
@@ -545,23 +547,23 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
             return lambda s: fnc(arg)
         
         for p in self.user_plots:
-            act = QtWidgets.QAction(p.title, self.ui.menuUserPlots)
+            act = QtGui.QAction(p.title, self.ui.menuUserPlots)
             act.triggered.connect(_gen_closure(self.plot_user_plot, p))
             self.ui.menuUserPlots.addAction(act)
         self.ui.menuUserPlots.addSeparator()
-        act = QtWidgets.QAction("Reload custom plots", self.ui.menuUserPlots)
+        act = QtGui.QAction("Reload custom plots", self.ui.menuUserPlots)
         act.triggered.connect(self.reload_user_plots)
         self.ui.menuUserPlots.addAction(act)
         if len(self.user_plots) > 0:
             rmUserPlotMenu = QtWidgets.QMenu(
                 "Remove plot", self.ui.menuUserPlots)
             for p in self.user_plots:
-                act = QtWidgets.QAction(p.title, self.ui.menuUserPlots)
+                act = QtGui.QAction(p.title, self.ui.menuUserPlots)
                 act.triggered.connect(
                     _gen_closure(self.remove_user_plot, p))
                 rmUserPlotMenu.addAction(act)
             self.ui.menuUserPlots.addMenu(rmUserPlotMenu)
-        act = QtWidgets.QAction("Save current plot", self.ui.menuUserPlots)
+        act = QtGui.QAction("Save current plot", self.ui.menuUserPlots)
         act.triggered.connect(self.save_user_plot)
         self.ui.menuUserPlots.addAction(act)
 
@@ -573,7 +575,7 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
             err_diag = QtWidgets.QMessageBox(self)
             err_diag.setModal(True)
             err_diag.setText("Cannot save custom plot if nothing is shown")
-            err_diag.exec_()
+            err_diag.exec()
             return
         defaultTitle = self.ui.tabWidget.tabText(
             self.ui.tabWidget.currentIndex())
@@ -646,7 +648,7 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
                 "Plot {} is not valid for this log file, some data is "
                 "missing\nMissing entries:\n{}".format(
                     p.title, missing_entries))
-            err_diag.exec_()
+            err_diag.exec()
             return
         plotW = SignalLoggerTab.UserPlot(self, p)
         self.ui.tabWidget.insertTab(
@@ -746,12 +748,42 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
             os.path.basename(fpath)))
 
 
+def apply_dark_theme(app):
+    """Force Fusion + dark palette so the UI is consistent regardless of host Qt theme.
+
+    Matplotlib paints its own canvas, so plots remain white by default.
+    """
+    app.setStyle("Fusion")
+    Role = QtGui.QPalette.ColorRole
+    Group = QtGui.QPalette.ColorGroup
+    white = QtGui.QColor(QtCore.Qt.GlobalColor.white)
+    black = QtGui.QColor(QtCore.Qt.GlobalColor.black)
+    red = QtGui.QColor(QtCore.Qt.GlobalColor.red)
+    palette = QtGui.QPalette()
+    palette.setColor(Role.Window, QtGui.QColor(53, 53, 53))
+    palette.setColor(Role.WindowText, white)
+    palette.setColor(Role.Base, QtGui.QColor(35, 35, 35))
+    palette.setColor(Role.AlternateBase, QtGui.QColor(53, 53, 53))
+    palette.setColor(Role.ToolTipBase, white)
+    palette.setColor(Role.ToolTipText, white)
+    palette.setColor(Role.Text, white)
+    palette.setColor(Role.Button, QtGui.QColor(53, 53, 53))
+    palette.setColor(Role.ButtonText, white)
+    palette.setColor(Role.BrightText, red)
+    palette.setColor(Role.Link, QtGui.QColor(42, 130, 218))
+    palette.setColor(Role.Highlight, QtGui.QColor(42, 130, 218))
+    palette.setColor(Role.HighlightedText, black)
+    palette.setColor(Group.Disabled, Role.Text, QtGui.QColor(127, 127, 127))
+    palette.setColor(Group.Disabled, Role.ButtonText, QtGui.QColor(127, 127, 127))
+    app.setPalette(palette)
+
+
 def main():
     """Console entry point — same behavior as bin/signal_logger_ui."""
     import argparse
     import signal as _signal
     import sys
-    from PySide2 import QtWidgets
+    from PySide6 import QtWidgets
 
     parser = argparse.ArgumentParser(description='Signal Logger UI')
     parser.add_argument(
@@ -763,12 +795,13 @@ def main():
     args = parser.parse_args()
 
     app = QtWidgets.QApplication(sys.argv)
+    apply_dark_theme(app)
     gui = SignalLoggerUI()
     gui.load_log(fpath=args.fpath, logdir=args.logdir)
     gui.show()
 
     _signal.signal(_signal.SIGINT, lambda *_: gui.close())
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':

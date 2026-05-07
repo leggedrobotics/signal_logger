@@ -31,7 +31,7 @@ import re
 
 import signal_logger_ui.ui
 
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 from signal_logger.config import TOPIC_SEPARATOR as _SEP
 
 from signal_logger_ui.config import RPY_LABELS
@@ -358,7 +358,7 @@ class SignalLoggerTab(QtWidgets.QWidget):
         self.ui.canvas.grid2 = copy.deepcopy(gridStyles['right'])
 
     @QtCore.Slot(str)
-    def on_xSelector_activated(self, k):
+    def on_xSelector_textActivated(self, k):
         self.x_data = k
         self.ui.canvas.clear_all()
         self.ui.canvas.x_data = k
@@ -415,7 +415,7 @@ class SignalLoggerTab(QtWidgets.QWidget):
             msg_box.setStandardButtons(QtWidgets.QMessageBox.Ok)
             msg_box.setText(msg.format(len(selected), max_signals_per_axis, axis_name, axis_name))
             msg_box.setWindowTitle("Signal Overflow")
-            msg_box.exec_()
+            msg_box.exec()
             selected = prevSelected
 
         def find_item(s):
@@ -465,18 +465,18 @@ class SignalLoggerTab(QtWidgets.QWidget):
         menu = QtWidgets.QMenu(ySelector)
 
         # Plot diff button
-        action = QtWidgets.QAction(u"Plot diff".format(item.actualText), menu)
+        action = QtGui.QAction(u"Plot diff".format(item.actualText), menu)
         action.triggered.connect(lambda: RemoveSpecialPlotButton(
             item.actualText, self, idx, "diff"))
         menu.addAction(action)
 
         # Plot deriv button
-        action = QtWidgets.QAction(u"Plot deriv".format(item.actualText), menu)
+        action = QtGui.QAction(u"Plot deriv".format(item.actualText), menu)
         action.triggered.connect(lambda: RemoveSpecialPlotButton(item.actualText, self, idx, "deriv"))
         menu.addAction(action)
 
         # Plot smooth deriv button
-        action = QtWidgets.QAction(u"Plot smooth deriv".format(item.actualText), menu)
+        action = QtGui.QAction(u"Plot smooth deriv".format(item.actualText), menu)
         action.triggered.connect(lambda: RemoveSpecialPlotButton(item.actualText, self, idx, "smooth_deriv"))
         menu.addAction(action)
 
@@ -487,7 +487,7 @@ class SignalLoggerTab(QtWidgets.QWidget):
         elif s is not None:
             for item_label, axis_label in RPY_LABELS:
                 label = u"Plot {}".format(item_label, item.actualText)
-                action = QtWidgets.QAction(label, menu)
+                action = QtGui.QAction(label, menu)
                 action.triggered.connect(
                     lambda label=axis_label:
                     RemoveSpecialPlotButton(s.group(1), self, idx, label))
@@ -505,7 +505,7 @@ class SignalLoggerTab(QtWidgets.QWidget):
                             qc.group(1)[1:], item_label)
                     else:
                         action_text = u"Plot {}".format(item_label)
-                    action = QtWidgets.QAction(action_text, menu)
+                    action = QtGui.QAction(action_text, menu)
                     plot_name = item.actualText + qc.group(1)
                     action.triggered.connect(
                         lambda name=plot_name, label=axis_label:
@@ -514,11 +514,11 @@ class SignalLoggerTab(QtWidgets.QWidget):
 
         # Plot in degrees button
         if "jointposition" in item.actualText.lower():
-            action = QtWidgets.QAction(u"Plot in deg".format(item.actualText), menu)
+            action = QtGui.QAction(u"Plot in deg".format(item.actualText), menu)
             action.triggered.connect(lambda: RemoveSpecialPlotButton(item.actualText, self, idx, "deg"))
             menu.addAction(action)
 
-        menu.exec_(ySelector.viewport().mapToGlobal(point))
+        menu.exec(ySelector.viewport().mapToGlobal(point))
 
     @staticmethod
     def MakeFigure(data, x, y1, y2, y1_label=None, y2_label=None, figure=None):

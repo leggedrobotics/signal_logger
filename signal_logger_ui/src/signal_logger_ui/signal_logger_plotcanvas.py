@@ -26,9 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from PySide2 import QtGui, QtWidgets, QtCore
+from PySide6 import QtGui, QtWidgets, QtCore
 
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QDialog, QComboBox
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QDialog, QComboBox
 
 import math
 import numpy
@@ -36,16 +36,15 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 try:
-    matplotlib.use('Qt5Agg')
-    matplotlib.rcParams['backend.qt5'] = 'PySide'
+    matplotlib.use('QtAgg')
     import matplotlib.pyplot
 except Exception:
     pass
 
 from collections import OrderedDict
 from math import asin, atan2
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from numpy import array
 from enum import Enum
 import itertools
@@ -846,7 +845,7 @@ class PlotCanvasWithToolbar(PlotFigure, QWidget):
         layout.addWidget(self.legend_selector)
 
     def axesDialog(self):
-        SimpleAxesDialog(self).exec_()
+        SimpleAxesDialog(self).exec()
 
     def on_legend_type_changed(self, name):
         self.legend_type = LegendInfo(name)

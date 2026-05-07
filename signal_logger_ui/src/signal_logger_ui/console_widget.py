@@ -27,7 +27,7 @@
 
 import numpy
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from qtconsole.inprocess import QtInProcessKernelManager
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 
