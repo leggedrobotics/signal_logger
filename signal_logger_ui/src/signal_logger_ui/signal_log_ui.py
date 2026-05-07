@@ -744,3 +744,32 @@ class SignalLoggerUI(QtWidgets.QMainWindow):
             tab.setGridStyles(self.gridStyles)
         self.setWindowTitle("Signal Logger - {}".format(
             os.path.basename(fpath)))
+
+
+def main():
+    """Console entry point — same behavior as bin/signal_logger_ui."""
+    import argparse
+    import signal as _signal
+    import sys
+    from PySide2 import QtWidgets
+
+    parser = argparse.ArgumentParser(description='Signal Logger UI')
+    parser.add_argument(
+        '-d', '--logdir',
+        default=os.path.expanduser('~') + '/.ros/',
+        help='directory where log files are looked up (default: ~/.ros)',
+    )
+    parser.add_argument('fpath', type=str, nargs='?', default='', help='name of log file')
+    args = parser.parse_args()
+
+    app = QtWidgets.QApplication(sys.argv)
+    gui = SignalLoggerUI()
+    gui.load_log(fpath=args.fpath, logdir=args.logdir)
+    gui.show()
+
+    _signal.signal(_signal.SIGINT, lambda *_: gui.close())
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
