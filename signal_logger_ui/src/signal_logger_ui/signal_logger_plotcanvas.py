@@ -119,8 +119,8 @@ class PlotFigure(object):
         self._legend_fontsize = 10
         self._top_offset = 0.9
         self._bottom_offset = 0.1
-        self._y1_legend_ncol = 1
-        self._y2_legend_ncol = 1
+        self._y1_legend_ncol = 3
+        self._y2_legend_ncol = 3
 
         self.data = None
         self.computed_data = {}
@@ -348,7 +348,7 @@ class PlotFigure(object):
             self._legend_left_handle = None
         if len(self.axes_plots) > 0 and self.legend_type != LegendInfo.NO_LEGEND:
             self._legend_left_handle = self.axes.legend(
-                bbox_to_anchor=(-0.1, 1.02, 0.6, .102), loc=2,
+                bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
                 ncol=self._y1_legend_ncol, mode="expand", borderaxespad=0.5,
                 fontsize=self._legend_fontsize)
 
@@ -357,8 +357,11 @@ class PlotFigure(object):
             self._legend_right_handle.remove()
             self._legend_right_handle = None
         if len(self.axes2_plots) > 0 and self.legend_type != LegendInfo.NO_LEGEND:
+            top_anchor = -0.125
+            if len(self.x_label()):
+                top_anchor = -0.175
             self._legend_right_handle = self.axes2.legend(
-                bbox_to_anchor=(0.5, 1.02, 0.6, .102), loc=2,
+                bbox_to_anchor=(0., top_anchor, 1., .102), loc=2,
                 ncol=self._y2_legend_ncol, mode="expand", borderaxespad=0.5,
                 fontsize=self._legend_fontsize)
 
@@ -881,7 +884,7 @@ class PlotCanvasWithToolbar(PlotFigure, QWidget):
 
             if self.axes_plots:
                 if self.vline:
-                    self.vline.set_xdata(x_hover)
+                    self.vline.set_xdata([x_hover, x_hover])
                 for key, ax in self.axes_plots.items():
                     # Retrieve x and y data directly from the Line2D object
                     x_data, y_data = ax.get_data()
@@ -891,7 +894,7 @@ class PlotCanvasWithToolbar(PlotFigure, QWidget):
 
             if self.axes2_plots:
                 if self.vline2:
-                    self.vline2.set_xdata(x_hover)
+                    self.vline2.set_xdata([x_hover, x_hover])
                 for key, ax in self.axes2_plots.items():
                     # Retrieve x and y data directly from the Line2D object
                     x_data, y_data = ax.get_data()
@@ -947,13 +950,13 @@ class PlotCanvasWithToolbar(PlotFigure, QWidget):
         if self.legend_type == LegendInfo.NAME_ONLY:
             if self.axes_plots: 
                 if self.vline:
-                    self.vline.set_xdata(numpy.nan)
+                    self.vline.set_xdata([numpy.nan, numpy.nan])
                 for key, ax in self.axes_plots.items():
                     ax.set_label(f"{key}")
 
             if self.axes2_plots:
                 if self.vline2:
-                    self.vline2.set_xdata(numpy.nan)
+                    self.vline2.set_xdata([numpy.nan, numpy.nan])
                 for key, ax in self.axes2_plots.items():
                     ax.set_label(f"{key}")
 
@@ -962,7 +965,7 @@ class PlotCanvasWithToolbar(PlotFigure, QWidget):
         elif self.legend_type == LegendInfo.NAME_AND_MINMAX:
             if self.axes_plots: 
                 if self.vline:
-                    self.vline.set_xdata(numpy.nan)
+                    self.vline.set_xdata([numpy.nan, numpy.nan])
                 for key, ax in self.axes_plots.items():
                     # Retrieve x and y data directly from the Line2D object
                     _, y_data = ax.get_data()
@@ -972,7 +975,7 @@ class PlotCanvasWithToolbar(PlotFigure, QWidget):
 
             if self.axes2_plots:
                 if self.vline2:
-                    self.vline2.set_xdata(numpy.nan)
+                    self.vline2.set_xdata([numpy.nan, numpy.nan])
                 for key, ax in self.axes2_plots.items():
                     # Retrieve x and y data directly from the Line2D object
                     _, y_data = ax.get_data()
